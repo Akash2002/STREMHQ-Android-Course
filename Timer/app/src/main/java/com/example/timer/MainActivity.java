@@ -2,6 +2,7 @@ package com.example.timer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,16 +53,17 @@ public class MainActivity extends AppCompatActivity {
                     countDownTimer = new CountDownTimer(timerSeconds * 1000, 1000) {
                         @Override
                         public void onTick(long l) {
-                            timerTextView.setText(l / 1000 + " s");
+                            timerTextView.setText(getFormattedText(l));
                             timeLeft = l;
                         }
 
                         @Override
                         public void onFinish() {
-                            timerTextView.setText("Done");
+                            timerTextView.setText(getResources().getString(R.string.done));
                             hasStartedInitially = false;
                             hasStoppedAfterStart = false;
-                            actionButton.setText("Start");
+                            actionButton.setText(getResources().getString(R.string.start));
+                            chime();
                         }
                     }.start();
                 }
@@ -93,20 +97,21 @@ public class MainActivity extends AppCompatActivity {
                         countDownTimer = new CountDownTimer(timerSeconds * 1000, 1000) {
                             @Override
                             public void onTick(long l) {
-                                timerTextView.setText(l / 1000 + " s");
+                                timerTextView.setText(getFormattedText(l));
                                 timeLeft = l;
                             }
 
                             @Override
                             public void onFinish() {
-                                timerTextView.setText("Done");
+                                timerTextView.setText(getResources().getString(R.string.done));
                                 hasStartedInitially = false;
                                 hasStoppedAfterStart = false;
-                                actionButton.setText("Start");
+                                actionButton.setText(getResources().getString(R.string.start));
+                                chime();
                             }
                         }.start();
 
-                        actionButton.setText("Stop"); // next action button
+                        actionButton.setText(getResources().getString(R.string.stop)); // next action button
 
                         clearFields();
 
@@ -119,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (!hasStoppedAfterStart) { // it would have been stop
                 if (countDownTimer != null) {
                     countDownTimer.cancel();
-                    actionButton.setText("Resume"); // next action
+                    actionButton.setText(getResources().getString(R.string.resume)); // next action
                     hasStoppedAfterStart = true;
                 }
             } else {
@@ -130,27 +135,42 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onTick(long l) {
                             timeLeft = l;
-                            timerTextView.setText(l / 1000 + " s");
+                            timerTextView.setText(getFormattedText(l));
                         }
 
                         @Override
                         public void onFinish() {
-                            timerTextView.setText("Done");
+                            timerTextView.setText(getResources().getString(R.string.done));
                             hasStartedInitially = false;
                             hasStoppedAfterStart = false;
-                            actionButton.setText("Start");
+                            actionButton.setText(getResources().getString(R.string.start));
+                            chime();
                         }
                     }.start();
-                    actionButton.setText("Stop");
+                    actionButton.setText(getResources().getString(R.string.stop));
                 }
             }
         });
+    }
+
+    private String getFormattedText(long millis) {
+        int hours = (int) (millis/1000/60/60);
+        millis = millis - hours * 1000 * 60 * 60;
+        int minutes = (int) (millis/1000/60);
+        millis = millis - minutes * 1000 * 60;
+        int seconds = (int) millis / 1000;
+        return String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
     }
 
     private void clearFields () {
         hoursEditText.setText("0");
         minutesEditText.setText("0");
         secondsEditText.setText("0");
+    }
+
+    private void chime () {
+        MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
+        mediaPlayer.start();
     }
 
     private boolean isLong (String s) {
