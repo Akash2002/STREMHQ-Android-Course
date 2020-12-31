@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button actionButton;
     private Button resetButton;
+    private Button clearButton;
 
     private CountDownTimer countDownTimer;
 
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         actionButton = findViewById(R.id.startButton);
         resetButton = findViewById(R.id.resetButton);
+        clearButton = findViewById(R.id.clearButton);
 
         timerTextView = findViewById(R.id.timerTextView);
 
@@ -90,6 +92,22 @@ public class MainActivity extends AppCompatActivity {
                     }.start();
                 }
             }
+        });
+
+        /*
+         * Here we define the clear functionality that basically resets the timer for the user might have
+         * started the timer unintentionally or with the incorrect timer parameters, so this feature
+         * allows the user to input values again. Essentially we are resetting everything.
+         */
+        clearButton.setOnClickListener(view -> {
+            countDownTimer.cancel();
+            timerSeconds = 0L;
+            timeLeft = 0L;
+            clearFields();
+            actionButton.setText(getResources().getString(R.string.start));
+            hasStartedInitially = false;
+            hasStoppedAfterStart = false;
+            timerTextView.setText(getResources().getString(R.string.default_text));
         });
 
         /*

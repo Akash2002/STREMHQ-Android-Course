@@ -4,4 +4,6 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="done">Done</string>
+    <string name="clear">Clear</string>
+    <string name="default_text">00:00:00</string>
 </resources>
